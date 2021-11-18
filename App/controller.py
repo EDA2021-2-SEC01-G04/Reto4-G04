@@ -30,8 +30,14 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
-
+def init():
+    # catalog es utilizado para interactuar con el modelo
+    analyzer = model.newAnalyzer()
+    return analyzer          
 # Funciones para la carga de datos
+def load(analyzer):
+    artistfile = cf.data_dir + "Skylines/airports_full.csv"
+    input_file = csv.DictReader(open(artistfile,encoding="utf-8"))
 
 # Funciones de ordenamiento
 

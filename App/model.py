@@ -26,9 +26,12 @@
 
 
 import config as cf
+from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
+from DISClib.Algorithms.Graphs import scc
+from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 
@@ -38,8 +41,17 @@ los mismos.
 """
 
 # Construccion de modelos
+def newAnalyzer():
+    analyzer = {'digrafo': None,
+                'grafo': None}
+    analyzer['digrafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=True,size=90000,)
+    analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=90000,)
+
+
 
 # Funciones para agregar informacion al catalogo
+
+
 
 # Funciones para creacion de datos
 
