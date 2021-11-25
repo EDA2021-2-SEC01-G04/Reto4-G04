@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+
 import config as cf
 import model
 import csv
@@ -35,10 +36,33 @@ def init():
     analyzer = model.newAnalyzer()
     return analyzer          
 # Funciones para la carga de datos
-def load(analyzer):
+def loadAirports(analyzer):
     artistfile = cf.data_dir + "Skylines/airports_full.csv"
-    input_file = csv.DictReader(open(artistfile,encoding="utf-8"))
+    input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
+    for airport in input_file:
+        if airport != None:
+            model.addAirport(airport,analyzer)
+            model.hashAirports(analyzer,airport)
+        
+def loadRoutes(analyzer):
+    artistfile = cf.data_dir + "Skylines/routes_full.csv"
+    input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
+    for route in input_file:
+        model.routesByDeparture(analyzer,route)
+    model.addRoutesConenctions(analyzer)
 
+def loadCities(analyzer):
+    artistfile = cf.data_dir + "Skylines/worldcities_full.csv"
+    input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
+    for airport in input_file:
+        if airport != None:
+            model.hashAirports(analyzer,airport)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def totalVertex(analyzer):
+    num = int(model.totalVertex(analyzer))
+    return num
+def totalEdge(analyzer):
+    num =  model.totalEdge(analyzer)
+    return num
