@@ -21,6 +21,7 @@
  """
 
 
+from App.model import addRoutesConenctions
 import config as cf
 import model
 import csv
@@ -36,6 +37,7 @@ def init():
     analyzer = model.newAnalyzer()
     return analyzer          
 # Funciones para la carga de datos
+
 def loadAirports(analyzer):
     artistfile = cf.data_dir + "Skylines/airports_full.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
@@ -50,13 +52,15 @@ def loadRoutes(analyzer):
     for route in input_file:
         model.routesByDeparture(analyzer,route)
     model.addRoutesConenctions(analyzer)
+    model.addRoutesConenctions2(analyzer)
 
 def loadCities(analyzer):
-    artistfile = cf.data_dir + "Skylines/worldcities_full.csv"
+    artistfile = cf.data_dir + "Skylines/worldcities.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
-            model.hashAirports(analyzer,airport)
+            model.hashcities(analyzer,airport)
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
@@ -66,3 +70,11 @@ def totalVertex(analyzer):
 def totalEdge(analyzer):
     num =  model.totalEdge(analyzer)
     return num
+def totalVertexgrafo(analyzer):
+    return model.totalVertexgrafo(analyzer)
+    
+def totalEdgegrafo(analyzer):
+    return model.totalEdgegrafo(analyzer)
+
+def totalCities(analyzer):
+    return model.totalCities(analyzer)

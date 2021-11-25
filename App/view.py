@@ -59,8 +59,13 @@ def thread_cycle():
             catalog = controller.init()
             controller.loadAirports(catalog)
             controller.loadRoutes(catalog)
-            print(controller.totalVertex(catalog))
-            print(controller.totalEdge(catalog))
+            controller.loadCities(catalog)
+            print("El total de aeropuertos en el grafo dirigidoes de: " + str(controller.totalVertex(catalog)))
+            print("El total de rutas en el grafo dirigido es de: " + str(controller.totalEdge(catalog)))
+            print("El total de aeropuertos en el grafo no dirigido de: " + str(controller.totalVertexgrafo(catalog)))
+            print("El total de rutas en el grafo no dirigido es de: " + str(controller.totalEdgegrafo(catalog)))
+            print("El total de ciudades es de: " + str(controller.totalCities(catalog)))
+
         elif int(inputs[0]) == 2:
             pass
 

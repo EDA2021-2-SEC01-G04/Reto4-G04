@@ -73,11 +73,12 @@ def hashAirports(analyzer,airport):
         lt.addLast(lst,airport)
 
 def routesByDeparture(analyzer,route):
-    entry = mp.get(analyzer["routes"],route["Departure"])
+    rt = (route["Departure"] + "-" + route["Destination"])
+    entry = mp.get(analyzer["routes"],rt)
     if entry is None:
         lst_rt = lt.newList()
         lt.addLast(lst_rt,route)
-        mp.put(analyzer["routes"],route["Departure"],lst_rt)
+        mp.put(analyzer["routes"],rt,lst_rt)
     else:
         lst_rt = entry["value"]
         lt.addLast(lst_rt,route)
@@ -97,23 +98,56 @@ def addConection(analyzer,route):
     return analyzer
 
 
-def hashcities(analyzer,citie):
-    entry = mp.get(analyzer["cities"],citie["city"])
+def hashcities(analyzer,city):
+    entry = mp.get(analyzer["cities"],city["city"])
     if entry is None:
         lst = lt.newList()
-        lt.addLast(lst,citie)
-        mp.put(analyzer["cities"],citie["city"],lst)
+        lt.addLast(lst,city)
+        mp.put(analyzer["cities"],city["city"],lst)
     else:
         lst = entry["value"]
-        lt.addLast(lst,citie)
+        lt.addLast(lst,city)
+
+
+def addRoutesConenctions2(analyzer):
+    lst_r = mp.keySet(analyzer["routes"])
+    for key in lt.iterator(lst_r):
+        if key != None:
+            vl = key.split("-")
+            if gr.containsVertex(analyzer["grafo"],vl[0]) != True:
+                gr.insertVertex(analyzer["grafo"],vl[0])
+            if gr.containsVertex(analyzer["grafo"],vl[1]) != True:
+                gr.insertVertex(analyzer["grafo"],vl[1])
+                
+            vl = vl[1]+"-"+vl[0]
+            lst = mp.get(analyzer['routes'], vl)
+            if lst != None:
+                lst = lst["value"]
+                if lst != None:
+                    for route in lt.iterator(lst):
+                        addConection2(analyzer,route)
+    return analyzer
+
+def addConection2(analyzer,route):
+    info = gr.getEdge(analyzer["grafo"],route["Departure"],route["Destination"])
+    if info is None:
+        gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],route["distance_km"])
+    return analyzer
 
 # Funciones para creacion de datos
 def totalVertex(analyzer):
-
     return gr.numVertices(analyzer["digrafo"])
 def totalEdge(analyzer):
     return gr.numEdges(analyzer["digrafo"])
 
+def totalVertexgrafo(analyzer):
+    return gr.numVertices(analyzer["grafo"])
+def totalEdgegrafo(analyzer):
+    return gr.numEdges(analyzer["grafo"])
+
+
+def totalCities(analyzer):
+    return mp.size(analyzer["cities"])
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
