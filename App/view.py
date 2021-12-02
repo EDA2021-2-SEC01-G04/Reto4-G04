@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+
 import config as cf
 import sys
 import threading
@@ -43,8 +44,13 @@ def printMenu():
     print("4- Ruta más corta entre ciudades")
     print("5- Utilizar las millas de viajero")
     print("6- Cuantificar el efecto de un aeropuerto cerrado")
-    
 
+def prntOptions(lst):
+    num = 0
+    for cd in lt.iterator(lst):
+        num += 1
+        print(str(num)+" "+ cd["city"],cd["country"],cd["lat"],cd["lng"])
+    
 catalog = None
 
 """
@@ -67,13 +73,29 @@ def thread_cycle():
             print("El total de ciudades es de: " + str(controller.totalCities(catalog)))
 
         elif int(inputs[0]) == 2:
-            pass
+            controller.puntointerconexion(catalog)
+            ab = controller.cnsultatree(catalog)
+            print(ab[0])
+            print(ab[1])
+            print(ab[2])
+            
+
 
         elif int(inputs[0]) == 3:
             pass
 
         elif int(inputs[0]) == 4:
-            pass
+            city1= input("Ingrese el nombre de la ciudad de origen\n")
+            city2= input("Ingrese el nombre de la ciuad de destino\n")
+            lst_ct = controller.cities(catalog,city1,city2)
+            print("seleccione la ciudad")
+            prntOptions(lst_ct[0])
+            selec1 = input()
+            print("seleccione la ciudad")
+            prntOptions(lst_ct[1])
+            selec2 = input()
+            print(lt.getElement(lst_ct[0],int(selec1)))
+            print(lt.getElement(lst_ct[1],int(selec2)))
         elif int(inputs[0]) == 5:
             pass
         elif int(inputs[0]) == 6:

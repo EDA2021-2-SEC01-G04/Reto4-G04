@@ -78,3 +78,13 @@ def totalEdgegrafo(analyzer):
 
 def totalCities(analyzer):
     return model.totalCities(analyzer)
+#---------Punto1----------
+def cnsultatree(analyzer):
+    return model.cnsultatree(analyzer)
+
+def puntointerconexion(analyzer):
+    return model.puntointerconexion(analyzer)
+
+#--------Punto3-------------
+def cities(analyzer,city1,city2):
+    return model.cities(analyzer,city1,city2)

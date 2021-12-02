@@ -25,10 +25,12 @@
  """
 
 
+
 import config as cf
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
@@ -52,6 +54,7 @@ def newAnalyzer():
     analyzer['cities'] = mp.newMap(numelements=91000,maptype='PROBING')
     analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=91000,comparefunction=compareStopIds)
     analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=91000,comparefunction=compareStopIds)
+    analyzer['tree'] = om.newMap(omaptype='BST')
     return analyzer
 
 
@@ -61,7 +64,6 @@ def addAirport(vertice,analyzer):
         gr.insertVertex(analyzer["digrafo"],vertice["IATA"])
         return analyzer
     
-
 def hashAirports(analyzer,airport):
     entry = mp.get(analyzer["airports"],airport["IATA"])
     if entry is None:
@@ -134,6 +136,23 @@ def addConection2(analyzer,route):
         gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],route["distance_km"])
     return analyzer
 
+#----------------Punto1-----------------------
+def puntointerconexion(analyzer):
+    lst_k = gr.vertices(analyzer["digrafo"])
+    for airport in lt.iterator(lst_k):
+        sz = gr.degree(analyzer["digrafo"],airport)
+        treeSz(analyzer,sz,airport)
+
+def treeSz(analyzer,sz,airport):
+    entry = om.get(analyzer["tree"],sz)
+    if entry is None:
+        lst = lt.newList()
+        lt.addLast(lst,airport)
+        om.put(analyzer["tree"],sz,lst)
+    else:
+        lst = entry["value"]
+        lt.addLast(lst,airport)
+    
 # Funciones para creacion de datos
 def totalVertex(analyzer):
     return gr.numVertices(analyzer["digrafo"])
@@ -145,10 +164,22 @@ def totalVertexgrafo(analyzer):
 def totalEdgegrafo(analyzer):
     return gr.numEdges(analyzer["grafo"])
 
-
 def totalCities(analyzer):
     return mp.size(analyzer["cities"])
 # Funciones de consulta
+def cnsultatree(analyzer):
+    mx = om.maxKey(analyzer["tree"])
+    lst = om.get(analyzer["tree"],mx)
+    lst = lst["value"]
+    keylst = om.keySet(analyzer["tree"])
+    return(mx,lt.getElement(lst,1),keylst)
+
+def cities(analyzer,city1,city2):
+    lst = mp.get(analyzer["cities"],city1)
+    lst = lst["value"]
+    lst2 = mp.get(analyzer["cities"],city2)
+    lst2 = lst2["value"]
+    return(lst,lst2)
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
