@@ -55,6 +55,7 @@ def newAnalyzer():
     analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=91000,comparefunction=compareStopIds)
     analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=91000,comparefunction=compareStopIds)
     analyzer['tree'] = om.newMap(omaptype='BST')
+    analyzer['counter'] = 0
     return analyzer
 
 
@@ -62,6 +63,11 @@ def newAnalyzer():
 def addAirport(vertice,analyzer):
     if gr.containsVertex(analyzer["digrafo"],vertice["IATA"]) != True:
         gr.insertVertex(analyzer["digrafo"],vertice["IATA"])
+        return analyzer
+
+def addAirport2(vertice,analyzer):
+    if gr.containsVertex(analyzer["grafo"],vertice["IATA"]) != True:
+        gr.insertVertex(analyzer["grafo"],vertice["IATA"])
         return analyzer
     
 def hashAirports(analyzer,airport):
@@ -93,6 +99,7 @@ def addRoutesConenctions(analyzer):
         for route in lt.iterator(lst):
             addConection(analyzer,route)
     return analyzer
+
 def addConection(analyzer,route):
     info = gr.getEdge(analyzer["digrafo"],route["Departure"],route["Destination"])
     if info is None:
@@ -109,6 +116,11 @@ def hashcities(analyzer,city):
     else:
         lst = entry["value"]
         lt.addLast(lst,city)
+
+def counterCities(analyzer):
+    analyzer['counter'] += 1
+
+
 
 
 def addRoutesConenctions2(analyzer):
@@ -165,7 +177,7 @@ def totalEdgegrafo(analyzer):
     return gr.numEdges(analyzer["grafo"])
 
 def totalCities(analyzer):
-    return mp.size(analyzer["cities"])
+    return analyzer["counter"]
 # Funciones de consulta
 def cnsultatree(analyzer):
     mx = om.maxKey(analyzer["tree"])

@@ -39,15 +39,16 @@ def init():
 # Funciones para la carga de datos
 
 def loadAirports(analyzer):
-    artistfile = cf.data_dir + "Skylines/airports_full.csv"
+    artistfile = cf.data_dir + "Skylines/airports-utf8-small.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
             model.addAirport(airport,analyzer)
+            model.addAirport2(airport,analyzer)
             model.hashAirports(analyzer,airport)
         
 def loadRoutes(analyzer):
-    artistfile = cf.data_dir + "Skylines/routes_full.csv"
+    artistfile = cf.data_dir + "Skylines/routes-utf8-small.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for route in input_file:
         model.routesByDeparture(analyzer,route)
@@ -55,11 +56,12 @@ def loadRoutes(analyzer):
     model.addRoutesConenctions2(analyzer)
 
 def loadCities(analyzer):
-    artistfile = cf.data_dir + "Skylines/worldcities.csv"
+    artistfile = cf.data_dir + "Skylines/worldcities-utf8.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
             model.hashcities(analyzer,airport)
+            model.counterCities(analyzer)
 
 # Funciones de ordenamiento
 
