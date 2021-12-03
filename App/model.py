@@ -101,9 +101,7 @@ def addRoutesConenctions(analyzer):
     return analyzer
 
 def addConection(analyzer,route):
-    info = gr.getEdge(analyzer["digrafo"],route["Departure"],route["Destination"])
-    if info is None:
-        gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],route["distance_km"])
+    gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],route["distance_km"])
     return analyzer
 
 
@@ -127,25 +125,21 @@ def addRoutesConenctions2(analyzer):
     lst_r = mp.keySet(analyzer["routes"])
     for key in lt.iterator(lst_r):
         if key != None:
-            vl = key.split("-")
-            if gr.containsVertex(analyzer["grafo"],vl[0]) != True:
-                gr.insertVertex(analyzer["grafo"],vl[0])
-            if gr.containsVertex(analyzer["grafo"],vl[1]) != True:
-                gr.insertVertex(analyzer["grafo"],vl[1])
-                
-            vl = vl[1]+"-"+vl[0]
-            lst = mp.get(analyzer['routes'], vl)
-            if lst != None:
-                lst = lst["value"]
-                if lst != None:
-                    for route in lt.iterator(lst):
+            v1 = key.split("-")
+            v1 = v1[1]+"-"+v1[0]
+            lst = lt.isPresent(lst_r,v1)
+            lst1 = lt.isPresent(lst_r,key)
+            if lst != 0 and lst1 != 0:
+                info = mp.get(analyzer["routes"],v1)
+                info = me.getValue(info)
+                lt.deleteElement(lst_r,lst)
+                if info != None:
+                    for route in lt.iterator(info):
                         addConection2(analyzer,route)
     return analyzer
 
 def addConection2(analyzer,route):
-    info = gr.getEdge(analyzer["grafo"],route["Departure"],route["Destination"])
-    if info is None:
-        gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],route["distance_km"])
+    gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],route["distance_km"])
     return analyzer
 
 #----------------Punto1-----------------------
