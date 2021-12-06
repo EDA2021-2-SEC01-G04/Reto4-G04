@@ -26,6 +26,7 @@
 
 
 
+from math import inf
 import config as cf
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
@@ -54,8 +55,8 @@ def newAnalyzer():
     analyzer['cities'] = mp.newMap(numelements=91000,maptype='PROBING')
     analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=91000,comparefunction=compareStopIds)
     analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=91000,comparefunction=compareStopIds)
-    analyzer['tree'] = om.newMap(omaptype='BST')
     analyzer['counter'] = 0
+    analyzer["components"] = 0
     return analyzer
 
 
@@ -63,7 +64,7 @@ def newAnalyzer():
 def addAirport(vertice,analyzer):
     if gr.containsVertex(analyzer["digrafo"],vertice["IATA"]) != True:
         gr.insertVertex(analyzer["digrafo"],vertice["IATA"])
-        return analyzer
+    return analyzer
 
 def addAirport2(vertice,analyzer):
     if gr.containsVertex(analyzer["grafo"],vertice["IATA"]) != True:
@@ -74,11 +75,8 @@ def hashAirports(analyzer,airport):
     entry = mp.get(analyzer["airports"],airport["IATA"])
     if entry is None:
         lst = lt.newList()
-        lt.addLast(lst,airport)
-        mp.put(analyzer["airports"],airport["IATA"],lst)
-    else:
-        lst = entry["value"]
-        lt.addLast(lst,airport)
+        mp.put(analyzer["airports"],airport["IATA"],airport)
+
 
 def routesByDeparture(analyzer,route):
     rt = (route["Departure"] + "-" + route["Destination"])
@@ -145,20 +143,40 @@ def addConection2(analyzer,route):
 #----------------Punto1-----------------------
 def puntointerconexion(analyzer):
     lst_k = gr.vertices(analyzer["digrafo"])
+    tp1 = (0,0)
+    tp2 = (0,0)
+    tp3 = (0,0)
+    tp4 = (0,0)
+    tp5 = (0,0)
     for airport in lt.iterator(lst_k):
         sz = gr.degree(analyzer["digrafo"],airport)
-        treeSz(analyzer,sz,airport)
+        sz2 = gr.indegree(analyzer["digrafo"],airport)
+        total = sz+sz2
+        if tp1[0] <= total:
+            tp5 = tp4
+            tp4 = tp3
+            tp3 = tp2
+            tp2 = tp1
+            tp1 = (total,airport,sz2,sz)
+        elif tp2[0] <= total:
+            tp5 =tp4
+            tp4 = tp3
+            tp3 = tp2
+            tp2 = (total,airport,sz2,sz)
 
-def treeSz(analyzer,sz,airport):
-    entry = om.get(analyzer["tree"],sz)
-    if entry is None:
-        lst = lt.newList()
-        lt.addLast(lst,airport)
-        om.put(analyzer["tree"],sz,lst)
-    else:
-        lst = entry["value"]
-        lt.addLast(lst,airport)
+        elif tp3[0] <= total:
+            tp5 = tp4
+            tp4 = tp3
+            tp3 = (total,airport,sz2,sz)
+        elif tp4[0] <= total:
+            tp5 = tp4
+            tp4 = (total,airport,sz2,sz)
+        elif tp5[0] <= total:
+            tp5 = (total,airport,sz2,sz)
     
+    return (tp1,tp2,tp3,tp4,tp5)
+#-------------Punto2------------
+
 # Funciones para creacion de datos
 def totalVertex(analyzer):
     return gr.numVertices(analyzer["digrafo"])
@@ -186,7 +204,34 @@ def cities(analyzer,city1,city2):
     lst2 = mp.get(analyzer["cities"],city2)
     lst2 = lst2["value"]
     return(lst,lst2)
+#-----------------------Punto1-------------------------
+def infoAirports(lts,analyzer):
+    lst_arprts = lt.newList()
+    for i in lts:
+        info = mp.get(analyzer["airports"],i[1])
+        info = info["value"]
+        mensaje = "Name: " + info["Name"],"City: " + info["City"],"Country: " + info["Country"],"IATA: "+ info["IATA"],"connections: " + str(i[0]),"inbound: "+ str(i[2]),"outbound: " + str(i[3])
+        lt.addLast(lst_arprts,mensaje)
+    return lst_arprts
+#-----------------------Punto2--------------------------
+def connected(analyzer):
+    analyzer["components"] = scc.KosarajuSCC(analyzer["digrafo"])
+    return scc.connectedComponents(analyzer["components"])
 
+def hasroute(analyzer,air1,air2):
+    es = scc.stronglyConnected(analyzer["components"],air1,air2)
+    return es
+def getinfo(analyzer,air1,air2):
+    lst = lt.newList()
+    info1 = mp.get(analyzer["airports"],air1)
+    info1 = me.getValue(info1)
+    info2 = mp.get(analyzer["airports"],air2)
+    info2 = me.getValue(info2)
+    men1 = "IATA: "+air1,"Name: " + info1["Name"],"City: " + info1["City"],"Country: " + info1["Country"]
+    lt.addLast(lst,men1)
+    men2 = "IATA: "+air2,"Name: " + info2["Name"],"City: " + info2["City"],"Country: " + info2["Country"]
+    lt.addLast(lst,men2)
+    return lst
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento

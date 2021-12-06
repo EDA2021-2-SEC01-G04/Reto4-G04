@@ -73,16 +73,21 @@ def thread_cycle():
             print("El total de ciudades es de: " + str(controller.totalCities(catalog)))
 
         elif int(inputs[0]) == 2:
-            controller.puntointerconexion(catalog)
-            ab = controller.cnsultatree(catalog)
-            print(ab[0])
-            print(ab[1])
-            print(ab[2])
+            lst = controller.puntointerconexion(catalog)
+            print(lt.getElement(lst,1))
+            print(lt.getElement(lst,2))
+            print(lt.getElement(lst,3))
+            print(lt.getElement(lst,4))
+            print(lt.getElement(lst,5))
             
-
-
         elif int(inputs[0]) == 3:
-            pass
+            air1 = input("ingrese el codigo IATA del primmer aeropuerto\n")
+            air2 = input("ingrese el codigo IATA del segundo aeropuerto\n")
+            info = controller.conectins(catalog,air1,air2)
+            print(lt.getElement(info[2],1))
+            print(lt.getElement(info[2],2))
+            print("El numero de componentes fuertemente conectados es de: " + str(info[0]))
+            print("Estan los dos aeropuertos conectados?\n" + str(info[1]))
 
         elif int(inputs[0]) == 4:
             city1= input("Ingrese el nombre de la ciudad de origen\n")

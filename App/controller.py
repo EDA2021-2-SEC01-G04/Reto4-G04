@@ -81,12 +81,16 @@ def totalEdgegrafo(analyzer):
 def totalCities(analyzer):
     return model.totalCities(analyzer)
 #---------Punto1----------
-def cnsultatree(analyzer):
-    return model.cnsultatree(analyzer)
-
 def puntointerconexion(analyzer):
-    return model.puntointerconexion(analyzer)
-
+    airports = model.puntointerconexion(analyzer)
+    info = model.infoAirports(airports,analyzer)
+    return info
+#---------Punto2----------
+def conectins(analyzer,air1,air2):
+    a= model.connected(analyzer)
+    b = model.hasroute(analyzer,air1,air2)
+    c = model.getinfo(analyzer,air1,air2)
+    return (a,b,c)
 #--------Punto3-------------
 def cities(analyzer,city1,city2):
     return model.cities(analyzer,city1,city2)
