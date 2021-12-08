@@ -90,12 +90,14 @@ def thread_cycle():
 
         elif int(inputs[0]) == 2:
             lst = controller.puntointerconexion(catalog)
-            print(lt.size(lst))
-            print(lt.getElement(lst,1))
-            print(lt.getElement(lst,2))
-            print(lt.getElement(lst,3))
-            print(lt.getElement(lst,4))
-            print(lt.getElement(lst,5))
+            print("El numer de aeropuertos en la network: " +str(controller.totalVertex(catalog)))
+            print("El numero total de aeropuertos conectados es de: "+ str(lst[1]))
+            print("Los 5 aeropuertos mas conectados")
+            print(lt.getElement(lst[0],1))
+            print(lt.getElement(lst[0],2))
+            print(lt.getElement(lst[0],3))
+            print(lt.getElement(lst[0],4))
+            print(lt.getElement(lst[0],5))
             
         elif int(inputs[0]) == 3:
             air1 = input("ingrese el codigo IATA del primmer aeropuerto\n")

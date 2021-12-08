@@ -145,6 +145,7 @@ def addConection2(analyzer,route):
 #----------------Punto1-----------------------
 def puntointerconexion(analyzer):
     lst_k = gr.vertices(analyzer["digrafo"])
+    lst = lt.newList()
     tp1 = (0,0)
     tp2 = (0,0)
     tp3 = (0,0)
@@ -154,6 +155,8 @@ def puntointerconexion(analyzer):
         sz = gr.degree(analyzer["digrafo"],airport)
         sz2 = gr.indegree(analyzer["digrafo"],airport)
         total = sz+sz2
+        if total != 0:
+            lt.addLast(lst,total)
         if tp1[0] <= total:
             tp5 = tp4
             tp4 = tp3
@@ -176,7 +179,7 @@ def puntointerconexion(analyzer):
         elif tp5[0] <= total:
             tp5 = (total,airport,sz2,sz)
     
-    return (tp1,tp2,tp3,tp4,tp5)
+    return ((tp1,tp2,tp3,tp4,tp5),lst)
 #-------------Punto2------------
 #-------------Punto3------------
 def functionhaversine(lat1, long1, lat2, long2):
@@ -261,12 +264,13 @@ def cities(analyzer,city1,city2):
 #-----------------------Punto1-------------------------
 def infoAirports(lts,analyzer):
     lst_arprts = lt.newList()
-    for i in lts:
+    for i in lts[0]:
         info = mp.get(analyzer["airports"],i[1])
         info = info["value"]
         mensaje = "Name: " + info["Name"],"City: " + info["City"],"Country: " + info["Country"],"IATA: "+ info["IATA"],"connections: " + str(i[0]),"inbound: "+ str(i[2]),"outbound: " + str(i[3])
         lt.addLast(lst_arprts,mensaje)
-    return lst_arprts
+    total = lt.size(lts[1])
+    return (lst_arprts,total)
 #-----------------------Punto2--------------------------
 def connected(analyzer):
     analyzer["components"] = scc.KosarajuSCC(analyzer["digrafo"])
