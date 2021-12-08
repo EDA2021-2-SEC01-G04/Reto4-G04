@@ -87,6 +87,10 @@ def thread_cycle():
             print("El total de aeropuertos en el grafo no dirigido de: " + str(controller.totalVertexgrafo(catalog)))
             print("El total de rutas en el grafo no dirigido es de: " + str(controller.totalEdgegrafo(catalog)))
             print("El total de ciudades es de: " + str(controller.totalCities(catalog)))
+            print("\nInformacion del primer y ultimo aeropuerto cargado(para el grafo no dirigido y el digrafo son las mismas): ")
+            print(controller.hashinformationairports(catalog))
+            print("\nInformacion de la primera y ultima ciudad cargada:")
+            print(controller.hashinformationcities(catalog))
 
         elif int(inputs[0]) == 2:
             lst = controller.puntointerconexion(catalog)
@@ -142,9 +146,10 @@ def thread_cycle():
             print("Numero total de aeropuertos conectados al arbol: " + str(retorno[5]))
             print("Distancia total de todos los arcos:" + str(retorno[0]))
             print(retorno[1])
-            print("Distancia total del recorrido presentado: " + str(retorno[2]))
-            print("Distancia total del recorrido ida y vuelta: " + str(retorno[2]*2))
+            print("Distancia total del recorrido presentado: " + str(retorno[2]/2))
+            print("Distancia total del recorrido ida y vuelta: " + str(retorno[2]))
             print(retorno[3])
+
         elif int(inputs[0]) == 6:
             airport = input("Ingrese el codigo IATA del aeropuerto a cerrar:\n")
             lst = controller.deleteairport(catalog,airport)

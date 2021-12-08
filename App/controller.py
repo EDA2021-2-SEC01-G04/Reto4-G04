@@ -39,6 +39,7 @@ def init():
 # Funciones para la carga de datos
 
 def loadAirports(analyzer):
+    valor = 1
     artistfile = cf.data_dir + "Skylines/airports-utf8-small.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
@@ -46,6 +47,7 @@ def loadAirports(analyzer):
             model.addAirport(airport,analyzer)
             #model.addAirport2(airport,analyzer)
             model.hashAirports(analyzer,airport)
+            model.hashValues(analyzer,valor,airport)
         
 def loadRoutes(analyzer):
     artistfile = cf.data_dir + "Skylines/routes-utf8-small.csv"
@@ -56,12 +58,14 @@ def loadRoutes(analyzer):
     model.addRoutesConenctions2(analyzer)
 
 def loadCities(analyzer):
+    valor = 0
     artistfile = cf.data_dir + "Skylines/worldcities-utf8.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
             model.hashcities(analyzer,airport)
             model.counterCities(analyzer)
+            model.hashValues(analyzer,valor,airport)
 
 # Funciones de ordenamiento
 
@@ -80,6 +84,12 @@ def totalEdgegrafo(analyzer):
 
 def totalCities(analyzer):
     return model.totalCities(analyzer)
+
+def hashinformationcities(analyzer):
+    return model.returnhashcities(analyzer)
+    
+def hashinformationairports(analyzer):
+    return model.returnhashairports(analyzer)
 #---------Punto1----------
 def puntointerconexion(analyzer):
     airports = model.puntointerconexion(analyzer)

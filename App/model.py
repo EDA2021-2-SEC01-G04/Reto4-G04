@@ -56,6 +56,7 @@ def newAnalyzer():
     analyzer['airports'] = mp.newMap(numelements=180000,maptype='PROBING')
     analyzer['routes'] = mp.newMap(numelements=180000,maptype='PROBING')
     analyzer['cities'] = mp.newMap(numelements=91000,maptype='PROBING')
+    analyzer["valores"] = mp.newMap(numelements=2,maptype="PROBING")
     analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=180000,comparefunction=compareStopIds)
     analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=180000,comparefunction=compareStopIds)
     analyzer['counter'] = 0
@@ -113,8 +114,43 @@ def hashcities(analyzer,city):
     else:
         lst = entry["value"]
         lt.addLast(lst,city)
-def xd(analyzer,number):
-    analyzer['xd'] = number
+
+def hashValues(analyzer,num,value):
+    if num == 0:
+        entry = mp.get(analyzer["valores"],"ciudades")
+        if entry is None:
+            lst = lt.newList()
+            lt.addLast(lst,value)
+            mp.put(analyzer["valores"],"ciudades",lst)
+        else:
+            lst = entry["value"]
+            lt.addLast(lst,value)
+    elif num == 1:
+        entry = mp.get(analyzer["valores"],"aeropuertos")
+        if entry is None:
+            lst = lt.newList()
+            lt.addLast(lst,value)
+            mp.put(analyzer["valores"],"aeropuertos",lst)
+        else:
+            lst = entry["value"]
+            lt.addLast(lst,value)
+
+def returnhashcities(analyzer):
+    listcities = mp.get(analyzer["valores"],"ciudades")
+    listcities = me.getValue(listcities)
+    firstelement = lt.getElement(listcities,1)
+    lastelement = lt.getElement(listcities,lt.size(listcities))
+    texto1 = "Primera ciudad: " + str(firstelement["city"]) + ", Pais: "  + str(firstelement["country"]) + ", Latitud: " + str(firstelement["lat"]) + ", Longitud: " + str(firstelement["lng"]) + ", Poblacion: " + str(firstelement["population"]) + "\n"
+    texto2 = "Ultima ciudad: " + str(lastelement["city"]) + ", Pais: "  + str(lastelement["country"]) + ", Latitud: " + str(lastelement["lat"]) + ", Longitud: " + str(lastelement["lng"]) + ", Poblacion: " + str(lastelement["population"])
+    texto = texto1 + texto2
+    return texto
+def returnhashairports(analyzer):
+    listairports = mp.get(analyzer["valores"],"aeropuertos")
+    listairports = me.getValue(listairports)
+    texto1 = "IATA: " + str(lt.getElement(listairports,1)["IATA"]) + ", Nombre: " + str(lt.getElement(listairports,1)["Name"]) + ", Ciudad: " + str(lt.getElement(listairports,1)["City"]) + ", Pais: " + str(lt.getElement(listairports,1)["Country"]) + ", Latitud: " + str(lt.getElement(listairports,1)["Latitude"]) + ", Longitud: " + str(lt.getElement(listairports,1)["Longitude"] + "\n")
+    texto6 = "IATA: " + str(lt.getElement(listairports,lt.size(listairports))["IATA"]) + ", Nombre: " + str(lt.getElement(listairports,lt.size(listairports))["Name"]) + ", Ciudad: " + str(lt.getElement(listairports,lt.size(listairports))["City"]) + ", Pais: " + str(lt.getElement(listairports,lt.size(listairports))["Country"]) + ", Latitud: " + str(lt.getElement(listairports,lt.size(listairports))["Latitude"]) + ", Longitud: " + str(lt.getElement(listairports,lt.size(listairports))["Longitude"])
+    texto = texto1 + texto6
+    return texto
 
 def counterCities(analyzer):
     analyzer['counter'] += 1
@@ -326,8 +362,8 @@ def flightbymiles(analyzer,city,miles):
             texto1 = "Ciudad 1(IATA): " + str(viaje["vertexA"]) + " ,Ciudad 2(IATA): " + str(viaje["vertexB"]) + " ,Distancia en Km: " + str(viaje["weight"]) + "\n"
             texto += texto1
             distancia += weight
-    sobra1 = round(((distancia*2)-distance)/1.6,3)
-    sobra2 = round((distance-(distancia*2))/1.6,3)
+    sobra1 = round((distancia-distance)/1.6,3)
+    sobra2 = round((distance-distancia)/1.6,3)
     if distancia > distance:
         texto_distancia = "Si desea hacer el viaje completo, le hacen falta " + str(sobra1) + " millas."
     else:
