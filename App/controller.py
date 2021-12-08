@@ -39,7 +39,7 @@ def init():
 # Funciones para la carga de datos
 
 def loadAirports(analyzer):
-    artistfile = cf.data_dir + "Skylines/airports-utf8-large.csv"
+    artistfile = cf.data_dir + "Skylines/airports-utf8-small.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
@@ -48,7 +48,7 @@ def loadAirports(analyzer):
             model.hashAirports(analyzer,airport)
         
 def loadRoutes(analyzer):
-    artistfile = cf.data_dir + "Skylines/routes-utf8-large.csv"
+    artistfile = cf.data_dir + "Skylines/routes-utf8-small.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for route in input_file:
         model.routesByDeparture(analyzer,route)
@@ -102,6 +102,10 @@ def airportsInArea(analyzer,city,city2):
 #--------Punto3-------------
 def cities(analyzer,city1,city2):
     return model.cities(analyzer,city1,city2)
+
+#--------Punto4-------------
+def flightbymiles(analyzer,city,miles):
+    return model.flightbymiles(analyzer,city,miles)
 
 #--------Punto5------------
 def deleteairport(analyzer,airport):

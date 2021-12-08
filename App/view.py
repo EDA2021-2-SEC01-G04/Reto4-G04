@@ -90,6 +90,7 @@ def thread_cycle():
 
         elif int(inputs[0]) == 2:
             lst = controller.puntointerconexion(catalog)
+            print(lt.size(lst))
             print(lt.getElement(lst,1))
             print(lt.getElement(lst,2))
             print(lt.getElement(lst,3))
@@ -106,13 +107,13 @@ def thread_cycle():
             print("Estan los dos aeropuertos conectados?\n" + str(info[1]))
 
         elif int(inputs[0]) == 4:
-            city1= input("Ingrese el nombre de la ciudad de origen\n")
-            city2= input("Ingrese el nombre de la ciuad de destino\n")
+            city1= input("Ingrese el nombre de la ciudad de origen:\n")
+            city2= input("Ingrese el nombre de la ciuad de destino:\n")
             lst_ct = controller.cities(catalog,city1,city2)
-            print("seleccione la ciudad")
+            print("Seleccione la ciudad")
             prntOptions(lst_ct[0])
             selec1 = input()
-            print("seleccione la ciudad")
+            print("Seleccione la ciudad")
             prntOptions(lst_ct[1])
             selec2 = input()
             #print(lt.getElement(lst_ct[0],int(selec1)))
@@ -133,23 +134,31 @@ def thread_cycle():
             prnRoutes(info[0][0])
 
         elif int(inputs[0]) == 5:
-            print(controller.printlst(catalog,"St. Petersburg"))
+            city = input("Escriba el nombre del aeropuerto en formato IATA de la ciudad que desea: ")
+            miles = int(input("Escriba sus millas: "))
+            retorno = controller.flightbymiles(catalog,city,miles)
+            print("Numero total de aeropuertos conectados al arbol: " + str(retorno[5]))
+            print("Distancia total de todos los arcos:" + str(retorno[0]))
+            print(retorno[1])
+            print("Distancia total del recorrido presentado: " + str(retorno[2]))
+            print("Distancia total del recorrido ida y vuelta: " + str(retorno[2]*2))
+            print(retorno[3])
         elif int(inputs[0]) == 6:
-            airport = input("ingrese el codigo IATA del aeropuerto cerrado:\n")
+            airport = input("Ingrese el codigo IATA del aeropuerto a cerrar:\n")
             lst = controller.deleteairport(catalog,airport)
             lst_air = lst[0]
             digrafo = lst[1]
             grafo = lst[2]
             sz = lt.size(lst_air)
-            print("--- grafo dirigido ---")
+            print("--- Grafo Dirigido ---")
             print("El numero originasl de aeropuertos: " + str(controller.totalVertex(catalog)) + " y rutas: " +  str(controller.totalEdge(catalog)))
-            print("--- grafo no dirigo ---")
-            print("El numero original de aeropuertos: " + str(controller.totalVertexgrafo(catalog)) + " y rutas: " +  str(controller.totalEdgegrafo(catalog)))
+            print("--- Grafo No Dirigido ---")
+            print("El numero original de aeropuertos: " + str(controller.totalVertexgrafo(catalog)) + " y rutas: " +  str(controller.totalEdgegrafo(catalog)) + "\n")
             print("Aeropuerto removido con IATA: " + airport)
             print()
-            print("--- grafo dirigido ---")
+            print("--- Grafo Dirigido ---")
             print("El numero resultante de aeropuertos: " +str(digrafo[0])+ " y rutas:"+ str(digrafo[1]))
-            print("--- grafo no dirigo ---")
+            print("--- Grafo No Dirigido ---")
             print("El numero resultante de aeropuertos: " +str(grafo[0])+ " y rutas:"+ str(grafo[1]))
             print()
             print("El numero de aeropuertos afectados es de: "+str(lt.size(lst[0])))

@@ -34,6 +34,8 @@ from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import scc
+from DISClib.Algorithms.Graphs import dfs
+from DISClib.Algorithms.Graphs import prim as pr
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Utils import error as error
@@ -111,6 +113,8 @@ def hashcities(analyzer,city):
     else:
         lst = entry["value"]
         lt.addLast(lst,city)
+def xd(analyzer,number):
+    analyzer['xd'] = number
 
 def counterCities(analyzer):
     analyzer['counter'] += 1
@@ -176,7 +180,7 @@ def puntointerconexion(analyzer):
 #-------------Punto2------------
 #-------------Punto3------------
 def functionhaversine(lat1, long1, lat2, long2):
-    # coigo sacado de https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+    # codigo sacado de https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
       dLat = radians(lat2 - lat1)
       dLon = radians(long2 - long1)
       lat1 = radians(lat1)
@@ -297,6 +301,35 @@ def getinforeq3(analyzer,lst,lst2):
     lt.addLast(lst_arpts,mensaje2)
     return lst_arpts
 
+
+#---------------------Punto4------------------------------
+def flightbymiles(analyzer,city,miles):
+    distance = miles * 1.6
+    grafo = analyzer["grafo"]
+    resultado = pr.PrimMST(grafo)
+    distancia_max = round(pr.weightMST(grafo,resultado),3)
+    lista = resultado["mst"]
+    tamaño = lt.size(lista)
+    recorrido_dfs = dfs.DepthFirstSearch(grafo,city)
+    distancia = 0
+    texto = "Rutas a seguir segun la ciudad establecida (se puede presentar en desorden): " + "\n"
+    texto_distancia = ""
+    for viaje in lt.iterator(lista):
+        ciudad1 = viaje["vertexA"]
+        ciudad2 = viaje["vertexB"]
+        weight = viaje["weight"]
+        if dfs.hasPathTo(recorrido_dfs,ciudad1) and dfs.hasPathTo(recorrido_dfs,ciudad2):
+            texto1 = "Ciudad 1(IATA): " + str(viaje["vertexA"]) + " ,Ciudad 2(IATA): " + str(viaje["vertexB"]) + " ,Distancia en Km: " + str(viaje["weight"]) + "\n"
+            texto += texto1
+            distancia += weight
+    sobra1 = round(((distancia*2)-distance)/1.6,3)
+    sobra2 = round((distance-(distancia*2))/1.6,3)
+    if distancia > distance:
+        texto_distancia = "Si desea hacer el viaje completo, le hacen falta " + str(sobra1) + " millas."
+    else:
+        texto_distancia = "Puede hacer el viaje completo, por lo que le sobran " + str(sobra2) + " millas."
+    distancia = round(distancia,3)
+    return distancia_max,texto,distancia,texto_distancia,distance,tamaño
 
 #---------------------Punto5------------------------------
 def deleteVertex(analyzer,ver):
