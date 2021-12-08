@@ -101,7 +101,9 @@ def addRoutesConenctions(analyzer):
     return analyzer
 
 def addConection(analyzer,route):
-    gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
+    info = gr.getEdge(analyzer["digrafo"],route["Departure"],route["Destination"])
+    if info is None:
+        gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
     return analyzer
 
 
@@ -175,7 +177,9 @@ def addRoutesConenctions2(analyzer):
     return analyzer
 
 def addConection2(analyzer,route):
-    gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
+    info = gr.getEdge(analyzer["grafo"],route["Departure"],route["Destination"])
+    if info is None:
+        gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
     return analyzer
 
 #----------------Punto1-----------------------
