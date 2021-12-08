@@ -366,6 +366,7 @@ def flightbymiles(analyzer,city,miles):
             texto1 = "Ciudad 1(IATA): " + str(viaje["vertexA"]) + " ,Ciudad 2(IATA): " + str(viaje["vertexB"]) + " ,Distancia en Km: " + str(viaje["weight"]) + "\n"
             texto += texto1
             distancia += weight
+    distancia = distancia*2
     sobra1 = round((distancia-distance)/1.6,3)
     sobra2 = round((distance-distancia)/1.6,3)
     if distancia > distance:
