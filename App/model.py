@@ -26,7 +26,7 @@
 
 
 
-from math import inf
+
 import config as cf
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
@@ -37,6 +37,7 @@ from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Utils import error as error
+from math import inf, radians, cos, sin, asin, sqrt
 assert cf
 
 """
@@ -50,13 +51,14 @@ def newAnalyzer():
                 'grafo': None,
                 "routes":None,
                 "airports":None}
-    analyzer['airports'] = mp.newMap(numelements=91000,maptype='PROBING')
-    analyzer['routes'] = mp.newMap(numelements=91000,maptype='PROBING')
+    analyzer['airports'] = mp.newMap(numelements=180000,maptype='PROBING')
+    analyzer['routes'] = mp.newMap(numelements=180000,maptype='PROBING')
     analyzer['cities'] = mp.newMap(numelements=91000,maptype='PROBING')
-    analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=91000,comparefunction=compareStopIds)
-    analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=91000,comparefunction=compareStopIds)
+    analyzer['digrafo'] = gr.newGraph(datastructure='ADJ_LIST',directed=True,size=180000,comparefunction=compareStopIds)
+    analyzer['grafo'] =  gr.newGraph(datastructure='ADJ_LIST',directed=False,size=180000,comparefunction=compareStopIds)
     analyzer['counter'] = 0
     analyzer["components"] = 0
+    analyzer["connections"] = 0
     return analyzer
 
 
@@ -64,17 +66,13 @@ def newAnalyzer():
 def addAirport(vertice,analyzer):
     if gr.containsVertex(analyzer["digrafo"],vertice["IATA"]) != True:
         gr.insertVertex(analyzer["digrafo"],vertice["IATA"])
-    return analyzer
-
-def addAirport2(vertice,analyzer):
     if gr.containsVertex(analyzer["grafo"],vertice["IATA"]) != True:
         gr.insertVertex(analyzer["grafo"],vertice["IATA"])
-        return analyzer
+    return analyzer
     
 def hashAirports(analyzer,airport):
     entry = mp.get(analyzer["airports"],airport["IATA"])
     if entry is None:
-        lst = lt.newList()
         mp.put(analyzer["airports"],airport["IATA"],airport)
 
 
@@ -93,13 +91,14 @@ def routesByDeparture(analyzer,route):
 def addRoutesConenctions(analyzer):
     lst_r = mp.keySet(analyzer["routes"])
     for key in lt.iterator(lst_r):
-        lst = mp.get(analyzer['routes'], key)['value']
+        lst = mp.get(analyzer['routes'], key)
+        lst = lst['value']
         for route in lt.iterator(lst):
             addConection(analyzer,route)
     return analyzer
 
 def addConection(analyzer,route):
-    gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],route["distance_km"])
+    gr.addEdge(analyzer["digrafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
     return analyzer
 
 
@@ -126,8 +125,7 @@ def addRoutesConenctions2(analyzer):
             v1 = key.split("-")
             v1 = v1[1]+"-"+v1[0]
             lst = lt.isPresent(lst_r,v1)
-            lst1 = lt.isPresent(lst_r,key)
-            if lst != 0 and lst1 != 0:
+            if lst != 0:
                 info = mp.get(analyzer["routes"],v1)
                 info = me.getValue(info)
                 lt.deleteElement(lst_r,lst)
@@ -137,7 +135,7 @@ def addRoutesConenctions2(analyzer):
     return analyzer
 
 def addConection2(analyzer,route):
-    gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],route["distance_km"])
+    gr.addEdge(analyzer["grafo"],route["Departure"],route["Destination"],float(route["distance_km"]))
     return analyzer
 
 #----------------Punto1-----------------------
@@ -176,6 +174,57 @@ def puntointerconexion(analyzer):
     
     return (tp1,tp2,tp3,tp4,tp5)
 #-------------Punto2------------
+#-------------Punto3------------
+def functionhaversine(lat1, long1, lat2, long2):
+    # coigo sacado de https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+      dLat = radians(lat2 - lat1)
+      dLon = radians(long2 - long1)
+      lat1 = radians(lat1)
+      lat2 = radians(lat2)
+
+      a = sin(dLat/2)**2 + cos(lat1)*cos(lat2)*sin(dLon/2)**2
+      c = 2*asin(sqrt(a))
+      rad_tierra = 6372.8
+
+      return rad_tierra * c
+
+def airportsInArea(analyzer,city):
+    lst = mp.keySet(analyzer["airports"])
+    lst_air = lt.newList()
+    num = 0
+    i = 1
+    while i <= lt.size(lst):
+        num += 10
+        for airport in lt.iterator(lst):
+            actual = mp.get(analyzer["airports"],airport)
+            actual = actual["value"]
+            distance = functionhaversine(float(city["lat"]),float(city["lng"]),float(actual["Latitude"]),float(actual["Longitude"]))
+            if distance <= num :
+                info = (airport,distance)
+                lt.addLast(lst_air,info)
+        if lt.size(lst_air) == 0:
+            i += 1
+        else:
+            break
+    
+    return lst_air
+def getminimunpath(analyzer,lst,lst2):
+    init = lt.getElement(lst,1)
+    dest = lt.getElement(lst2,1)
+    info = minimuncost(analyzer,init[0],dest[0])
+    #info[1] = info[1] + init[1] + dest[1]
+    return info
+
+def minimuncost(analyzer,airport,destination):
+    connection = djk.Dijkstra(analyzer["digrafo"],airport)
+    if djk.hasPathTo(connection,destination) is True:
+        path = djk.pathTo(connection,destination)
+        distance = djk.distTo(connection,destination)
+        return (path,distance)
+    else:
+        return None
+    
+
 
 # Funciones para creacion de datos
 def totalVertex(analyzer):
@@ -204,6 +253,7 @@ def cities(analyzer,city1,city2):
     lst2 = mp.get(analyzer["cities"],city2)
     lst2 = lst2["value"]
     return(lst,lst2)
+    
 #-----------------------Punto1-------------------------
 def infoAirports(lts,analyzer):
     lst_arprts = lt.newList()
@@ -231,6 +281,51 @@ def getinfo(analyzer,air1,air2):
     lt.addLast(lst,men1)
     men2 = "IATA: "+air2,"Name: " + info2["Name"],"City: " + info2["City"],"Country: " + info2["Country"]
     lt.addLast(lst,men2)
+    return lst
+#---------------------Punto3------------------------------
+def getinforeq3(analyzer,lst,lst2):
+    lst_arpts = lt.newList()
+    init = lt.getElement(lst,1)
+    dest = lt.getElement(lst2,1)
+    init = mp.get(analyzer["airports"],init[0])
+    dest = mp.get(analyzer["airports"],dest[0])
+    init = init["value"]
+    dest = dest["value"]
+    mensaje1 = "IATA: " + init["IATA"],"Name: "+init["Name"],"City: "+init["City"],"Country: "+init["Country"] 
+    mensaje2 = "IATA: " + dest["IATA"],"Name: "+dest["Name"],"City: "+dest["City"],"Country: "+dest["Country"]
+    lt.addLast(lst_arpts,mensaje1)
+    lt.addLast(lst_arpts,mensaje2)
+    return lst_arpts
+
+
+#---------------------Punto5------------------------------
+def deleteVertex(analyzer,ver):
+    lst_vr = gr.vertices(analyzer["digrafo"])
+    lst = lt.newList()
+    for vertice in lt.iterator(lst_vr):
+        if gr.getEdge(analyzer["digrafo"],ver,vertice) != None and ver != vertice:
+    
+            actual = mp.get(analyzer["airports"],vertice)
+            
+            actual = actual["value"]
+            lt.addLast(lst,actual)
+    digraf = deletdigrafo(analyzer,ver)
+    grafo = deletgrafo(analyzer,ver)
+    return (lst,digraf,grafo)
+
+def deletdigrafo(analyzer,ver):
+    num_ed_ver = (gr.degree(analyzer["digrafo"],ver)) + (gr.indegree(analyzer["digrafo"],ver))
+    numvertx = gr.numVertices(analyzer["digrafo"]) - 1
+    num_edges = (gr.numEdges(analyzer["digrafo"]))- num_ed_ver
+    return(numvertx,num_edges)
+def deletgrafo(analyzer,ver):
+    num_ed_ver = gr.degree(analyzer["grafo"],ver)
+    numvertx = gr.numVertices(analyzer["grafo"]) - 1
+    num_edges = (gr.numEdges(analyzer["grafo"]))- num_ed_ver
+    return (numvertx,num_edges)
+def printlst(analyzer,nombre):
+    lst = mp.get(analyzer["cities"],nombre)
+    lst = lst["value"]
     return lst
 # Funciones utilizadas para comparar elementos dentro de una lista
 

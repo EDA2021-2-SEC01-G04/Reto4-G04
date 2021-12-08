@@ -21,7 +21,7 @@
  """
 
 
-from App.model import addRoutesConenctions
+
 import config as cf
 import model
 import csv
@@ -39,16 +39,16 @@ def init():
 # Funciones para la carga de datos
 
 def loadAirports(analyzer):
-    artistfile = cf.data_dir + "Skylines/airports-utf8-small.csv"
+    artistfile = cf.data_dir + "Skylines/airports-utf8-large.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
             model.addAirport(airport,analyzer)
-            model.addAirport2(airport,analyzer)
+            #model.addAirport2(airport,analyzer)
             model.hashAirports(analyzer,airport)
         
 def loadRoutes(analyzer):
-    artistfile = cf.data_dir + "Skylines/routes-utf8-small.csv"
+    artistfile = cf.data_dir + "Skylines/routes-utf8-large.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for route in input_file:
         model.routesByDeparture(analyzer,route)
@@ -91,6 +91,22 @@ def conectins(analyzer,air1,air2):
     b = model.hasroute(analyzer,air1,air2)
     c = model.getinfo(analyzer,air1,air2)
     return (a,b,c)
+#----------Punto3---------
+def airportsInArea(analyzer,city,city2):
+    air1 = model.airportsInArea(analyzer,city)
+    air2 = model.airportsInArea(analyzer,city2)
+    info = model.getinforeq3(analyzer,air1,air2)
+    path = model.getminimunpath(analyzer,air1,air2)
+    return (path,info)
+
 #--------Punto3-------------
 def cities(analyzer,city1,city2):
     return model.cities(analyzer,city1,city2)
+
+#--------Punto5------------
+def deleteairport(analyzer,airport):
+    return model.deleteVertex(analyzer,airport)
+
+
+def printlst(analyzer,nombre):
+    return model.printlst(analyzer,nombre)

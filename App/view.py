@@ -21,6 +21,7 @@
  """
 
 
+from math import inf
 import config as cf
 import sys
 import threading
@@ -51,6 +52,21 @@ def prntOptions(lst):
         num += 1
         print(str(num)+" "+ cd["city"],cd["country"],cd["lat"],cd["lng"])
     
+def prntairports(lst):
+    for airport in lt.iterator(lst):
+        print("IATA: " +airport["IATA"],"Name: " + airport["Name"],"City: " +airport["City"],"Country: "+airport["Country"])
+def prntairports2(lst,sz):
+    print("IATA: "+lt.getElement(lst,1)["IATA"],"Name: " + lt.getElement(lst,1)["Name"],"City: "+lt.getElement(lst,1)["City"],"Country: "+lt.getElement(lst,1)["Country"])
+    print("IATA: "+lt.getElement(lst,2)["IATA"],"Name: " + lt.getElement(lst,2)["Name"],"City: "+lt.getElement(lst,2)["City"],"Country: "+lt.getElement(lst,2)["Country"])
+    print("IATA: "+lt.getElement(lst,3)["IATA"],"Name: " + lt.getElement(lst,3)["Name"],"City: "+lt.getElement(lst,3)["City"],"Country: "+lt.getElement(lst,3)["Country"])
+    print("IATA: "+lt.getElement(lst,sz)["IATA"],"Name: " + lt.getElement(lst,sz)["Name"],"City: "+lt.getElement(lst,sz)["City"],"Country: "+lt.getElement(lst,sz)["Country"])
+    print("IATA: "+lt.getElement(lst,sz-1)["IATA"],"Name: " + lt.getElement(lst,sz-1)["Name"],"City: "+lt.getElement(lst,sz-1)["City"],"Country: "+lt.getElement(lst,sz-1)["Country"])
+    print("IATA: "+lt.getElement(lst,sz-2)["IATA"],"Name: " + lt.getElement(lst,sz-2)["Name"],"City: "+lt.getElement(lst,sz-2)["City"],"Country: "+lt.getElement(lst,sz-2)["Country"])
+def prnRoutes(lst):
+    for routes in lt.iterator(lst):
+         print("Departure: "+routes["vertexA"],"Destination: "+routes["vertexB"],"Distanmce_Km: "+str(routes["weight"]))
+
+
 catalog = None
 
 """
@@ -99,12 +115,48 @@ def thread_cycle():
             print("seleccione la ciudad")
             prntOptions(lst_ct[1])
             selec2 = input()
-            print(lt.getElement(lst_ct[0],int(selec1)))
-            print(lt.getElement(lst_ct[1],int(selec2)))
+            #print(lt.getElement(lst_ct[0],int(selec1)))
+            #print(lt.getElement(lst_ct[1],int(selec2)))
+            ct1 = lt.getElement(lst_ct[0],int(selec1))
+            ct2 = lt.getElement(lst_ct[1],int(selec2))
+            info = controller.airportsInArea(catalog,ct1,ct2)
+            print("--- El aeropuerto de salida desde la ciudad de "+city1+" ---")
+            print()
+            print(lt.getElement(info[1],1))
+            print()
+            print("--- El aeropuerto de llegada desde la ciudad de "+city2+" ---")
+            print()
+            print(lt.getElement(info[1],2))
+            print()
+            print("---  Resultados de Dijkstra ---")
+            print("Distancia total: "+ str(info[0][1])+" (km)")
+            prnRoutes(info[0][0])
+
         elif int(inputs[0]) == 5:
-            pass
+            print(controller.printlst(catalog,"St. Petersburg"))
         elif int(inputs[0]) == 6:
-            pass
+            airport = input("ingrese el codigo IATA del aeropuerto cerrado:\n")
+            lst = controller.deleteairport(catalog,airport)
+            lst_air = lst[0]
+            digrafo = lst[1]
+            grafo = lst[2]
+            sz = lt.size(lst_air)
+            print("--- grafo dirigido ---")
+            print("El numero originasl de aeropuertos: " + str(controller.totalVertex(catalog)) + " y rutas: " +  str(controller.totalEdge(catalog)))
+            print("--- grafo no dirigo ---")
+            print("El numero original de aeropuertos: " + str(controller.totalVertexgrafo(catalog)) + " y rutas: " +  str(controller.totalEdgegrafo(catalog)))
+            print("Aeropuerto removido con IATA: " + airport)
+            print()
+            print("--- grafo dirigido ---")
+            print("El numero resultante de aeropuertos: " +str(digrafo[0])+ " y rutas:"+ str(digrafo[1]))
+            print("--- grafo no dirigo ---")
+            print("El numero resultante de aeropuertos: " +str(grafo[0])+ " y rutas:"+ str(grafo[1]))
+            print()
+            print("El numero de aeropuertos afectados es de: "+str(lt.size(lst[0])))
+            if sz <= 6:
+                prntairports(lst_air)
+            else:
+                prntairports2(lst_air,sz)
         else:
             sys.exit(0)
     sys.exit(0)
