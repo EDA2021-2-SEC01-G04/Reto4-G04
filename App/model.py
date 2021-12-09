@@ -33,6 +33,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import queue as q
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import prim as pr
@@ -353,7 +354,7 @@ def flightbymiles(analyzer,city,miles):
     resultado = pr.PrimMST(grafo)
     distancia_max = round(pr.weightMST(grafo,resultado),3)
     lista = resultado["mst"]
-    tamaño = lt.size(lista)
+    auxiliar = []
     recorrido_dfs = dfs.DepthFirstSearch(grafo,city)
     distancia = 0
     texto = "Rutas a seguir segun la ciudad establecida (se puede presentar en desorden): " + "\n"
@@ -362,6 +363,10 @@ def flightbymiles(analyzer,city,miles):
         ciudad1 = viaje["vertexA"]
         ciudad2 = viaje["vertexB"]
         weight = viaje["weight"]
+        if ciudad1 not in auxiliar:
+            list.append(auxiliar,ciudad1)
+        if ciudad2 not in auxiliar:
+            list.append(auxiliar,ciudad2)
         if dfs.hasPathTo(recorrido_dfs,ciudad1) and dfs.hasPathTo(recorrido_dfs,ciudad2):
             texto1 = "Ciudad 1(IATA): " + str(viaje["vertexA"]) + " ,Ciudad 2(IATA): " + str(viaje["vertexB"]) + " ,Distancia en Km: " + str(viaje["weight"]) + "\n"
             texto += texto1
@@ -374,6 +379,7 @@ def flightbymiles(analyzer,city,miles):
     else:
         texto_distancia = "Puede hacer el viaje completo, por lo que le sobran " + str(sobra2) + " millas."
     distancia = round(distancia,3)
+    tamaño = len(auxiliar)
     return distancia_max,texto,distancia,texto_distancia,distance,tamaño
 
 #---------------------Punto5------------------------------
