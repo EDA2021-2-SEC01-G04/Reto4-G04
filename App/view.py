@@ -28,7 +28,7 @@ import threading
 import controller
 from DISClib.ADT import list as lt
 assert cf
-
+import time as t
 
 """
 La vista se encarga de la interacción con el usuario
@@ -79,9 +79,13 @@ def thread_cycle():
         if int(inputs[0]) == 1:
             print("Cargando información de los archivos ....")
             catalog = controller.init()
+            star_time = t.process_time()
             controller.loadAirports(catalog)
             controller.loadRoutes(catalog)
             controller.loadCities(catalog)
+            end_time = t.process_time()
+            laps_time = (end_time - star_time)*1000
+            print("El tiempo de carga fue: " +str(laps_time))
             print("El total de aeropuertos en el grafo dirigido es de: " + str(controller.totalVertex(catalog)))
             print("El total de rutas en el grafo dirigido es de: " + str(controller.totalEdge(catalog)))
             print("El total de aeropuertos en el grafo no dirigido de: " + str(controller.totalVertexgrafo(catalog)))
@@ -93,7 +97,11 @@ def thread_cycle():
             print(controller.hashinformationcities(catalog))
 
         elif int(inputs[0]) == 2:
+            star_time1 = t.process_time()
             lst = controller.puntointerconexion(catalog)
+            end_time1 = t.process_time()
+            laps_time1 = (end_time1 - star_time1)*1000
+            print("El tiempo de carga fue: " +str(laps_time1))
             print("El numer de aeropuertos en la network: " +str(controller.totalVertex(catalog)))
             print("El numero total de aeropuertos conectados es de: "+ str(lst[1]))
             print("Los 5 aeropuertos mas conectados")
@@ -106,7 +114,11 @@ def thread_cycle():
         elif int(inputs[0]) == 3:
             air1 = input("ingrese el codigo IATA del primmer aeropuerto\n")
             air2 = input("ingrese el codigo IATA del segundo aeropuerto\n")
+            star_time2 = t.process_time()
             info = controller.conectins(catalog,air1,air2)
+            end_time2 = t.process_time()
+            laps_time2 = (end_time2 - star_time2)*1000
+            print("El tiempo de carga fue: " +str(laps_time2))
             print(lt.getElement(info[2],1))
             print(lt.getElement(info[2],2))
             print("El numero de componentes fuertemente conectados es de: " + str(info[0]))
@@ -126,33 +138,46 @@ def thread_cycle():
             #print(lt.getElement(lst_ct[1],int(selec2)))
             ct1 = lt.getElement(lst_ct[0],int(selec1))
             ct2 = lt.getElement(lst_ct[1],int(selec2))
+            star_time3 = t.process_time()
             info = controller.airportsInArea(catalog,ct1,ct2)
-            print("--- El aeropuerto de salida desde la ciudad de "+city1+" ---")
-            print()
-            print(lt.getElement(info[1],1))
-            print()
-            print("--- El aeropuerto de llegada desde la ciudad de "+city2+" ---")
-            print()
-            print(lt.getElement(info[1],2))
-            print()
-            print("---  Resultados de Dijkstra ---")
-            print("Distancia total: "+ str(info[0][1])+" (km)")
-            prnRoutes(info[0][0])
-
+            end_time3 = t.process_time()
+            laps_time3 = (end_time3 - star_time3)*1000
+            if info != None:
+                print("El tiempo de carga fue: " +str(laps_time3))
+                print("--- El aeropuerto de salida desde la ciudad de "+city1+" ---")
+                print()
+                print(lt.getElement(info[1],1))
+                print()
+                print("--- El aeropuerto de llegada desde la ciudad de "+city2+" ---")
+                print()
+                print(lt.getElement(info[1],2))
+                print()
+                print("---  Resultados de Dijkstra ---")
+                print("Distancia total: "+ str(info[0][1])+" (km)")
+                prnRoutes(info[0][0])
+            else:
+                print("No existe ruta entre los dos aeropuertos")
         elif int(inputs[0]) == 5:
             city = input("Escriba el nombre del aeropuerto en formato IATA de la ciudad que desea: ")
             miles = int(input("Escriba sus millas: "))
+            star_time4 = t.process_time()
             retorno = controller.flightbymiles(catalog,city,miles)
+            end_time4 = t.process_time()
+            laps_time4 = (end_time4 - star_time4)*1000
             print("Numero total de aeropuertos conectados al arbol: " + str(retorno[5]))
             print("Distancia total de todos los arcos:" + str(retorno[0]))
             print(retorno[1])
             print("Distancia total del recorrido presentado: " + str(retorno[2]/2))
             print("Distancia total del recorrido ida y vuelta: " + str(retorno[2]))
             print(retorno[3])
-
+            print("El tiempo de carga fue: " +str(laps_time4))
         elif int(inputs[0]) == 6:
             airport = input("Ingrese el codigo IATA del aeropuerto a cerrar:\n")
+            star_time5 = t.process_time()
             lst = controller.deleteairport(catalog,airport)
+            end_time5 = t.process_time()
+            laps_time5 = (end_time5 - star_time5)*1000
+            print("El tiempo de carga fue: " +str(laps_time5))
             lst_air = lst[0]
             digrafo = lst[1]
             grafo = lst[2]

@@ -25,7 +25,7 @@
 import config as cf
 import model
 import csv
-
+import time as t
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -39,8 +39,9 @@ def init():
 # Funciones para la carga de datos
 
 def loadAirports(analyzer):
+    star_time = t.process_time()
     valor = 1
-    artistfile = cf.data_dir + "Skylines/airports-utf8-small.csv"
+    artistfile = cf.data_dir + "Skylines/airports-utf8-large.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for airport in input_file:
         if airport != None:
@@ -48,16 +49,24 @@ def loadAirports(analyzer):
             #model.addAirport2(airport,analyzer)
             model.hashAirports(analyzer,airport)
             model.hashValues(analyzer,valor,airport)
+    end_time = t.process_time()
+    laps_time = (end_time - star_time)*1000
+    return laps_time
         
 def loadRoutes(analyzer):
-    artistfile = cf.data_dir + "Skylines/routes-utf8-small.csv"
+    star_time = t.process_time()
+    artistfile = cf.data_dir + "Skylines/routes-utf8-large.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
     for route in input_file:
         model.routesByDeparture(analyzer,route)
     model.addRoutesConenctions(analyzer)
     model.addRoutesConenctions2(analyzer)
+    end_time = t.process_time()
+    laps_time = (end_time - star_time)*1000
+    return laps_time
 
 def loadCities(analyzer):
+    star_time = t.process_time()
     valor = 0
     artistfile = cf.data_dir + "Skylines/worldcities-utf8.csv"
     input_file = csv.DictReader(open(artistfile,encoding="utf-8"),delimiter=",")
@@ -66,6 +75,9 @@ def loadCities(analyzer):
             model.hashcities(analyzer,airport)
             model.counterCities(analyzer)
             model.hashValues(analyzer,valor,airport)
+    end_time = t.process_time()
+    laps_time = (end_time - star_time)*1000
+    return laps_time
 
 # Funciones de ordenamiento
 
